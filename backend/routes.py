@@ -25,6 +25,20 @@ def validate_request():
 
     return {"status": "success"}
 
+@app.route('/api/scrape',methods=['POST'])
+def scrape():
+    #scrapes
+    data = request.get_json()
+    url = data.get('url')
+    scraped_data = "poopoo"
+    if not url:
+        return {"status": "error", "message": "Missing URL"}, 400
+
+    # Perform scraping logic here
+    # ...
+
+    return {"status": "success", "data": scraped_data}
+
 @app.route('/', methods=['GET'])
 def index():
     return "MHAHAHAHAHA BACKEND"
