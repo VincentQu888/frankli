@@ -28,9 +28,9 @@ load_dotenv()  # Load environment variables
 
 
 #setup
-uri = "mongodb+srv://knowmayus:guest666wasrealguys@cluster0.octhd90.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+uri = ""
 client = MongoClient(uri, server_api=ServerApi('1'))
-genai.configure(api_key="AIzaSyC_SZPN-cpkm4e1KoIRlVcRLhgbrQv7s18")
+genai.configure(api_key="")
 #we can worry about the open api keys later.
 try:
     client.admin.command('ping')
