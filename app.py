@@ -63,7 +63,7 @@ app.debug = True
 
 app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(32))
 #setup
-uri = "mongodb+srv://knowmayus:guest666wasrealguys@cluster0.octhd90.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+uri = ""
 client = MongoClient(uri, server_api=ServerApi('1'))
 genai.configure(api_key="AIzaSyC_SZPN-cpkm4e1KoIRlVcRLhgbrQv7s18")
 #we can worry about the open api keys later.
