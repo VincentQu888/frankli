@@ -65,7 +65,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(32))
 #setup
 uri = ""
 client = MongoClient(uri, server_api=ServerApi('1'))
-genai.configure(api_key="AIzaSyC_SZPN-cpkm4e1KoIRlVcRLhgbrQv7s18")
+genai.configure(api_key="")
 #we can worry about the open api keys later.
 try:
     client.admin.command('ping')
