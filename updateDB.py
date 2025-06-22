@@ -272,8 +272,7 @@ async def schedule():
 
 
 # async def fetch_user_info(top_n):
-#     email = "kgutcce430@couldmail.com"
-#     password = "6384u6q7"
+#   
 
 #     try:
 #         with open("companies.json", "r", encoding="utf-8") as file:
