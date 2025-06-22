@@ -1,0 +1,13 @@
+body{
+    font-family: 'Satoshi', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+.text-gray{
+    color: #b1b1b1;
+}
+
+.bg-lightgray{
+    background-color: #eff4f6;
+}
