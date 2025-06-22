@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Loading | TouchedIn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #4285f4;
+        --bg: #f4f6f8;
+        --fg: #1f2933;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg);
+        color: var(--fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .loader-container {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hexagon {
+        width: 64px;
+        height: 64px;
+        background-color: var(--primary);
+        clip-path: polygon(
+          50% 0%,
+          93% 25%,
+          93% 75%,
+          50% 100%,
+          7% 75%,
+          7% 25%
+        );
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      .loading-text {
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        position: relative;
+      }
+
+      .loading-dots::after {
+        content: '';
+        display: inline-block;
+        animation: dots 1.2s infinite steps(4);
+        font-weight: bold;
+      }
+
+      @keyframes dots {
+        0% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75% { content: '...'; }
+        100% { content: ''; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader-container">
+      <div class="hexagon"></div>
+      <div class="loading-text">Loading your personalized insights<span class="loading-dots"></span></div>
+    </div>
+  </body>
+</html>

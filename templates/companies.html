@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Select Companies</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='companies.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Select Target Companies</h1>
+            <p class="subtitle">Choose companies to include in your outreach campaign</p>
+        </header>
+        
+        <form id="generateForm" class="generate-form" method="POST" action="{{ url_for('generate') }}">
+            <input id="transfer-info" name="transfer-info" value="{{ query }}"/>
+            <input type="hidden" id="email-info" name="email-info" value=""/>
+            
+            <div class="table-container">
+                <div class="table-actions">
+                    <button class="select-all-btn" onclick="toggleSelectAll()" type="button">
+                        <input type="checkbox" id="selectAll">
+                        <label for="selectAll">Select All</label>
+                    </button>
+                    <span class="selected-count">0 companies selected</span>
+                </div>
+
+                <table class="companies-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col"></th>
+                            <th>Company Name</th>
+                            <th>Overview</th>
+                            <th>Industry</th>
+                            <th>Size</th>
+                            <th>Location</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in company_data %}
+                        <tr>
+                            <td class="checkbox-col">
+                                <input type="checkbox" name="selected_companies" class="company-checkbox" value="{{ company.name }}">
+                                <input type="hidden" name="industry_{{ company.name }}" value="{{ company.industry }}">
+                                <input type="hidden" name="employees_{{ company.name }}" value="{{ company.size }}">
+                                <input type="hidden" name="overview_{{ company.name  }}" value="{{ company.overview }}">
+                            </td>
+                            <td class="company-name">
+                                <div class="company-info">
+                                    <img src="{{ company.logo_url }}" alt="{{ company.name }}" class="company-logo"
+                                        onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ddd%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2240%22 fill=%22%23999%22>{{ company.name[0] }}</text></svg>'">
+                                    <span>{{ company.name }}</span>
+                                </div>
+                            </td>
+                            
+                            <td class="overview">{{ company.overview }}</td>
+                            <td class="industry">{{ company.industry }}</td>
+                            <td class="size">{{ company.size }}</td>
+                            <td class="location">{{ company.location }}</td>
+
+                            {% if company.highlighted %}
+                                <td class="info-cell">
+                                    <div class="info-container">
+                                        <button class="info-button" type="button">
+                                            ⓘ
+                                        </button>
+                                        <div class="info-dropdown"> 
+                                            This company is more likely to respond to outreach emails due to the following recent LinkedIn post: "{{ company.most_recent_post }}".
+                                        </div>
+                                    </div>
+                                </td>
+                            {% else %}
+                                <td class="info-cell"></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% if company_data|length == 0 %}
+                <div class="empty-state">
+                    <h3>No companies found</h3>
+                    <p>Please check your connection and try again.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="action-buttons">
+                <button class="scan-btn" onclick="scanSelected()" type="submit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 21l-6-4.5"></path>
+                        <circle cx="10.5" cy="10.5" r="7.5"></circle>
+                    </svg>
+                    Analyze and Generate Messages
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script type = "module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+  const firebaseConfig = {
+      apiKey: "AIzaSyCtwLNNi28MnBT_GO5NDcD4-_hFuMDidcQ",
+      authDomain: "authpoo.firebaseapp.com",
+      projectId: "authpoo",
+      storageBucket: "authpoo.firebasestorage.app",
+      messagingSenderId: "1034827872639",
+      appId: "1:1034827872639:web:7831081124bcd90513424a",
+      measurementId: "G-BEZ3KX3000"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    let email="";
+     onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/";
+        return;
+      }
+      email = user.email;
+        console.log(email)
+    })
+
+
+
+        function attachCheckboxListeners() {
+            document.querySelectorAll('.company-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedCount);
+            });
+        }
+
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.company-checkbox:checked');
+            const count = checkboxes.length;
+            document.querySelector('.selected-count').textContent =
+                count === 1 ? '1 company selected' : `${count} companies selected`;
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const companyCheckboxes = document.querySelectorAll('.company-checkbox');
+
+            companyCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+
+            updateSelectedCount();
+        }
+
+        function scanSelected() {
+            const selectedCompanies = [];
+            document.querySelectorAll('.company-checkbox:checked').forEach(checkbox => {
+                selectedCompanies.push(checkbox.dataset.company);
+            });
+
+            if (selectedCompanies.length === 0) {
+                alert('Please select at least one company to generate messages for.');
+                event.preventDefault();
+                return;
+            }
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            attachCheckboxListeners();
+            updateSelectedCount();
+        });
+    </script>
+</body>
+</html>

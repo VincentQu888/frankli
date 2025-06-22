@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - TouchedIn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #4285f4;
+      --gray-light: #f4f6f8;
+      --gray-dark: #2a2a2a;
+      --shadow: rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .auth-container {
+      background: #fff;
+      padding: 2rem 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px var(--shadow);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .auth-container h1 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .auth-container p {
+      margin-bottom: 2rem;
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .auth-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .auth-btn.login {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    .auth-btn.login:hover {
+      background-color: #3367d6;
+    }
+
+    .auth-btn.logout {
+      background-color: #e0e0e0;
+      color: var(--gray-dark);
+    }
+
+    .auth-btn.logout:hover {
+      background-color: #d5d5d5;
+    }
+
+    .welcome-message {
+      margin-top: 1.5rem;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h1>TouchedIn</h1>
+    <p>Sign in with your Google account to get started.</p>
+    <button id="btn-login" class="auth-btn login">Log in with Google</button>
+    <button id="btn-logout" class="auth-btn logout">Log out</button>
+    <!-- Welcome message will be injected here -->
+  </div>
+
+  <!-- Firebase SDK & Auth Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtwLNNi28MnBT_GO5NDcD4-_hFuMDidcQ",
+      authDomain: "authpoo.firebaseapp.com",
+      projectId: "authpoo",
+      storageBucket: "authpoo.firebasestorage.app",
+      messagingSenderId: "1034827872639",
+      appId: "1:1034827872639:web:7831081124bcd90513424a",
+      measurementId: "G-BEZ3KX3000"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById('btn-login');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    loginBtn.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error('Login error:', err);
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      const container = document.querySelector('.auth-container');
+      const oldMsg = document.querySelector('.welcome-message');
+      if (oldMsg) oldMsg.remove();
+
+      if (user) {
+        const msg = document.createElement('p');
+        msg.className = 'welcome-message';
+        msg.textContent = `Welcome, ${user.displayName}! Redirecting...`;
+        container.appendChild(msg);
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

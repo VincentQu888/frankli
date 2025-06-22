@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>TouchedIn | Analytics Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #4285f4;
+      --primary-light: #6fa8ff;
+      --primary-dark: #3367d6;
+      --gray-light: #f4f6f8;
+      --gray-medium: #e2e8f0;
+      --gray-dark: #2a2a2a;
+      --white: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #06b6d4;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --border-radius: 12px;
+      --transition: all 0.2s ease-in-out;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--white);
+      border-right: 1px solid var(--gray-medium);
+      padding: 1.5rem;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gray-medium);
+    }
+
+    .nav-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.25rem;
+      border-radius: 8px;
+      color: #6b7280;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .nav-item:hover {
+      background-color: #f8fafc;
+      color: var(--gray-dark);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .nav-item .icon {
+      margin-right: 0.75rem;
+      width: 16px;
+      text-align: center;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, var(--danger), #dc2626);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-top: auto;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 2rem;
+      flex: 1;
+      background-color: var(--gray-light);
+    }
+
+    .header {
+      margin-bottom: 2rem;
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .greeting {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--gray-dark);
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-medium);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--gray-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--gray-dark);
+      font-size: 0.875rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--white);
+      border: 2px solid var(--gray-medium);
+      border-radius: 8px;
+      color: var(--gray-dark);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    }
+
+    .analyze-btn {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.875rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: var(--transition);
+      margin-top: 0.5rem;
+    }
+
+    .analyze-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .stats-overview {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card.primary { border-left-color: var(--primary); }
+    .stat-card.success { border-left-color: var(--success); }
+    .stat-card.warning { border-left-color: var(--warning); }
+    .stat-card.danger { border-left-color: var(--danger); }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value.primary { color: var(--primary); }
+    .stat-value.success { color: var(--success); }
+    .stat-value.warning { color: var(--warning); }
+    .stat-value.danger { color: var(--danger); }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .stat-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .stat-change.positive {
+      color: var(--success);
+    }
+
+    .stat-change.negative {
+      color: var(--danger);
+    }
+
+    .user-info {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+    }
+
+    .user-info .stat-value,
+    .user-info .stat-label,
+    .user-info .user-email {
+      color: white;
+    }
+
+    .user-email {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-top: 0.5rem;
+    }
+
+    .analytics-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-placeholder {
+      height: 200px;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-weight: 500;
+      border: 2px dashed #d1d5db;
+    }
+
+    .history-section {
+      grid-column: 1 / -1;
+    }
+
+    .history-list {
+      list-style: none;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .history-item {
+      background: var(--white);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--gray-medium);
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-item:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: var(--primary);
+    }
+
+    .history-content {
+      flex: 1;
+    }
+
+    .history-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--gray-dark);
+    }
+
+    .history-meta {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .history-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .history-status.success {
+      background: #dcfce7;
+      color: var(--success);
+    }
+
+    .history-status.pending {
+      background: #fef3c7;
+      color: var(--warning);
+    }
+
+    .history-status.failed {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .loader-content {
+      text-align: center;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--gray-medium);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--gray-dark);
+    }
+
+    .loader-subtext {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .analytics-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .main {
+        margin-left: 0;
+      }
+      
+      .stats-overview {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo">TouchedIn</div>
+      
+      <div class="nav-section">
+        <div class="nav-section-title">Analytics</div>
+        <a href="#" class="nav-item active">
+          <span class="icon">📊</span>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">📈</span>
+          Performance
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">🎯</span>
+          Targeting
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Campaigns</div>
+        <a href="#" class="nav-item">
+          <span class="icon">📧</span>
+          Email Campaigns
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">👥</span>
+          Lead Management
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">📋</span>
+          Templates
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Tools</div>
+        <a href="#" class="nav-item">
+          <span class="icon">🔍</span>
+          Company Research
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">⚙️</span>
+          Settings
+        </a>
+      </div>
+      
+      <button id="logout-btn" class="logout-btn">
+        <span>🚪</span>
+        Log out
+      </button>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <h1 id="greeting" class="greeting">Loading user...</h1>
+        <p class="subtitle">Welcome to your analytics dashboard</p>
+      </header>
+
+      <div class="stats-overview">
+        <div class="stat-card user-info">
+          <div id="user-name" class="stat-value">Loading...</div>
+          <div class="stat-label">Account Holder</div>
+          <div id="user-email" class="user-email">Loading...</div>
+        </div>
+        
+        <div class="stat-card primary">
+          <div id="cold-sent" class="stat-value primary">Loading...</div>
+          <div class="stat-label">Total Emails Sent</div>
+          <div class="stat-change positive">↗ +12% this month</div>
+        </div>
+        
+        <div class="stat-card success">
+          <div id="cold-success" class="stat-value success">Loading...</div>
+          <div class="stat-label">Successful Responses</div>
+          <div class="stat-change positive">↗ +8% this month</div>
+        </div>
+        
+        <div class="stat-card warning">
+          <div id="response-rate" class="stat-value warning">0%</div>
+          <div class="stat-label">Response Rate</div>
+          <div class="stat-change">Calculated automatically</div>
+        </div>
+        
+        <div class="stat-card danger">
+          <div id="cold-failed" class="stat-value danger">Loading...</div>
+          <div class="stat-label">No Response</div>
+          <div class="stat-change negative">↘ -5% this month</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <h2 class="card-title">
+            <span>🔍</span>
+            Company Analysis
+          </h2>
+          <form id="dashboard-form">
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" id="dashboard-input" class="form-input" placeholder="Enter company name to analyze..." />
+            </div>
+            <button type="submit" class="analyze-btn">
+              Analyze Company
+            </button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">
+            <span>⚡</span>
+            Quick Actions
+          </h2>
+          <div style="display: grid; gap: 0.75rem;">
+            <button style="padding: 0.75rem; border: 2px solid var(--gray-medium); background: white; border-radius: 8px; cursor: pointer; font-weight: 500; transition: var(--transition);" 
+                    onmouseover="this.style.borderColor='var(--primary)'; this.style.backgroundColor='#f8fafc'"
+                    onmouseout="this.style.borderColor='var(--gray-medium)'; this.style.backgroundColor='white'">
+              📈 View Analytics Report
+            </button>
+            <button style="padding: 0.75rem; border: 2px solid var(--gray-medium); background: white; border-radius: 8px; cursor: pointer; font-weight: 500; transition: var(--transition);"
+                    onmouseover="this.style.borderColor='var(--primary)'; this.style.backgroundColor='#f8fafc'"
+                    onmouseout="this.style.borderColor='var(--gray-medium)'; this.style.backgroundColor='white'">
+              📧 Create Campaign
+            </button>
+            <button style="padding: 0.75rem; border: 2px solid var(--gray-medium); background: white; border-radius: 8px; cursor: pointer; font-weight: 500; transition: var(--transition);"
+                    onmouseover="this.style.borderColor='var(--primary)'; this.style.backgroundColor='#f8fafc'"
+                    onmouseout="this.style.borderColor='var(--gray-medium)'; this.style.backgroundColor='white'">
+              📊 Export Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-section">
+        <div class="chart-card">
+          <h3 style="margin-bottom: 1rem; color: var(--gray-dark); font-weight: 600;">📈 Email Performance</h3>
+          <div class="chart-placeholder">
+            Email Response Rate Over Time
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3 style="margin-bottom: 1rem; color: var(--gray-dark); font-weight: 600;">🎯 Campaign Success</h3>
+          <div class="chart-placeholder">
+            Success Rate by Industry
+          </div>
+        </div>
+      </div>
+
+      <div class="card history-section">
+        <h2 class="card-title">
+          <span>📚</span>
+          Recent Analysis History
+        </h2>
+        <ul id="history-list" class="history-list">
+          <li class="history-item">
+            <div class="history-content">
+              <div class="history-title">No analysis history yet</div>
+              <div class="history-meta">Start analyzing companies to see your history</div>
+            </div>
+            <span class="history-status pending">Ready</span>
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <div id="loader" class="loader">
+      <div class="loader-content">
+        <div class="spinner"></div>
+        <div class="loader-text">Analyzing Company...</div>
+        <div class="loader-subtext">Gathering insights and generating analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtwLNNi28MnBT_GO5NDcD4-_hFuMDidcQ",
+      authDomain: "authpoo.firebaseapp.com",
+      projectId: "authpoo",
+      storageBucket: "authpoo.firebasestorage.app",
+      messagingSenderId: "1034827872639",
+      appId: "1:1034827872639:web:7831081124bcd90513424a",
+      measurementId: "G-BEZ3KX3000"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Handle auth state and load user data
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/";
+        return;
+      }
+
+      // Update greeting
+      const greeting = document.getElementById("greeting");
+      if (greeting) {
+        greeting.textContent = `Hello, ${user.displayName || user.email.split('@')[0]}!`;
+      }
+
+      // Fetch user history from backend
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.displayName || ""
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("User data received:", data);
+          
+          // Update user info display
+          document.getElementById("user-email").textContent = data.email || "N/A";
+          document.getElementById("user-name").textContent = data.name || "Anonymous User";
+          
+          const sentCount = data.cold_emails_sent || 0;
+          const successCount = data.cold_emails_successful || 0;
+          const failedCount = sentCount - successCount;
+          const responseRate = sentCount > 0 ? Math.round((successCount / sentCount) * 100) : 0;
+          
+          document.getElementById("cold-sent").textContent = sentCount;
+          document.getElementById("cold-success").textContent = successCount;
+          document.getElementById("cold-failed").textContent = failedCount;
+          document.getElementById("response-rate").textContent = responseRate + "%";
+          
+          // Load history if available
+          if (data.emails && data.emails.length > 0) {
+            loadHistory(data.emails);
+          }
+        } else {
+          console.error("Failed to fetch user data:", response.statusText);
+        }
+      } catch (err) {
+        console.error("Error fetching user info:", err);
+      }
+    });
+
+    // Load history function
+    function loadHistory(emails = []) {
+      const historyList = document.getElementById("history-list");
+      historyList.innerHTML = "";
+      
+      if (emails.length === 0) {
+        historyList.innerHTML = `
+          <li class="history-item">
+            <div class="history-content">
+              <div class="history-title">No analysis history yet</div>
+              <div class="history-meta">Start analyzing companies to see your history</div>
+            </div>
+            <span class="history-status pending">Ready</span>
+          </li>
+        `;
+        return;
+      }
+      
+      emails.forEach((email, index) => {
+        const li = document.createElement("li");
+        li.className = "history-item";
+        
+        const status = email.status || (Math.random() > 0.5 ? 'success' : 'pending');
+        const statusText = status === 'success' ? 'Responded' : status === 'failed' ? 'No Response' : 'Pending';
+        
+        li.innerHTML = `
+          <div class="history-content">
+            <div class="history-title">${email.name || `Company Analysis #${index + 1}`}</div>
+            <div class="history-meta">${email.email || 'No contact email'} • ${email.date_sent || 'No date'}</div>
+          </div>
+          <span class="history-status ${status}">${statusText}</span>
+        `;
+        historyList.appendChild(li);
+      });
+    }
+
+    // DOM loaded event handlers
+    window.addEventListener("DOMContentLoaded", () => {
+      // Logout button
+      const logoutBtn = document.getElementById("logout-btn");
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = "/frontend/index.html";
+        } catch (error) {
+          console.error("Logout failed:", error);
+        }
+      });
+
+      // Form submission
+    //   const form = document.getElementById("dashboard-form");
+    //   form.addEventListener("submit", (e) => {
+    //     e.preventDefault();
+    //     const companyName = document.getElementById("dashboard-input").value;
+    //     if (!companyName.trim()) {
+    //       alert("Please enter a company name");
+    //       return;
+    //     }
+        
+    //     document.getElementById("loader").style.display = "flex";
+    //     setTimeout(() => {
+    //       window.location.href = "./results.html";
+    //     }, 3000);
+    //   });
+    }); 
+  </script> -->
+</body>
+</html>
